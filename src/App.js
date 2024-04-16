@@ -20,11 +20,12 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route
+        <Route path="/" element={<MainPage/>}></Route>
+        {/* <Route
           path="/"
           element={isLoggedIn ? <MainPage /> : <Navigate to="/login" />}
         />
-        <Route path="/login" element={<AuthPage />} />
+        <Route path="/login" element={<AuthPage />} /> */}
       </Routes>
     </Router>
   );
