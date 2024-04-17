@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+  background-color: #43608c;
+}
+
+.page-container {
+  height: 90vh; /* Subtract the top and bottom margin from the viewport height */
+  width: 90vw; /* Subtract the left and right margin from the viewport width */
+  overflow: auto; /* Enable scrolling if content overflows */
+  border-radius: 5px;
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.page-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.page-container {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+

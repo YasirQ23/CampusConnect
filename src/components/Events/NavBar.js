@@ -1,84 +1,41 @@
-// ResponsiveAppBar.js
-import React, { useState } from "react";
+import React from "react";
+import Parse from "parse";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
-import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import SchoolIcon from '@mui/icons-material/School';
+import SchoolIcon from "@mui/icons-material/School";
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 const pages = ["Events", "Create", "Manage"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar({ onPageChange }) {
-  const [anchorElNav, setAnchorElNav] = useState(null);
-
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
   const handlePageChange = (page) => {
     onPageChange(page);
-    setAnchorElNav(null); // Close the menu after selecting a page
+  };
+
+  const handleSignOut = () => {
+    Parse.User.logOut()
+      .then(() => {
+        console.log("User signed out successfully");
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error signing out: ", error);
+      });
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-          </Typography>
           <SchoolIcon />
-
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            ></IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
+            <Menu id="menu-appbar">
               {pages.map((page) => (
                 <MenuItem key={page} onClick={() => handlePageChange(page)}>
                   <Typography textAlign="center">{page}</Typography>
@@ -86,24 +43,6 @@ function ResponsiveAppBar({ onPageChange }) {
               ))}
             </Menu>
           </Box>
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
@@ -115,6 +54,9 @@ function ResponsiveAppBar({ onPageChange }) {
               </Button>
             ))}
           </Box>
+          <Button color="inherit" onClick={handleSignOut}>
+            <ExitToAppIcon></ExitToAppIcon>
+          </Button>
         </Toolbar>
       </Container>
     </AppBar>

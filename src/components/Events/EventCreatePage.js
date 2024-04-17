@@ -35,7 +35,7 @@ const EventsCreatePage = () => {
     setAlertMessage(message);
     setTimeout(() => {
       setAlertMessage("");
-    }, 10000); // Hide alert after 3 seconds
+    }, 10000); 
   };
 
   return (

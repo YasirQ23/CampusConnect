@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import AuthPage from "./components/Auth/AuthPage";
 import MainPage from "./components/Events/MainPage";
 import Parse from "parse";
@@ -20,12 +25,14 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<MainPage/>}></Route>
-        {/* <Route
+        <Route
           path="/"
           element={isLoggedIn ? <MainPage /> : <Navigate to="/login" />}
         />
-        <Route path="/login" element={<AuthPage />} /> */}
+        <Route
+          path="/login"
+          element={isLoggedIn ? <Navigate to="/" /> : <AuthPage />}
+        />
       </Routes>
     </Router>
   );

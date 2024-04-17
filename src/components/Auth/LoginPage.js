@@ -1,13 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Parse from 'parse';
+import Parse from "parse";
 
-Parse.initialize(process.env.REACT_APP_PARSE_APP_ID, process.env.REACT_APP_PARSE_JS_KEY);
+Parse.initialize(
+  process.env.REACT_APP_PARSE_APP_ID,
+  process.env.REACT_APP_PARSE_JS_KEY
+);
 Parse.serverURL = process.env.REACT_APP_PARSE_SERVER_URL;
 
 async function loginUser(credentials) {
   try {
-    const user = await Parse.User.logIn(credentials.email, credentials.password);
+    const user = await Parse.User.logIn(
+      credentials.email,
+      credentials.password
+    );
     return { success: true, user };
   } catch (error) {
     return { success: false, error: error.message };
@@ -18,7 +23,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Hook for navigation
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +33,7 @@ export default function LoginPage() {
     if (response.success) {
       console.log("Login successful");
       // Redirect to main page
-      navigate("/");
+      window.location.reload();
     } else {
       console.log("Login failed:", response.error);
       setError(response.error);
