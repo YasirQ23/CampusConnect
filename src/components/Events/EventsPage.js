@@ -18,6 +18,9 @@ const EventsPage = () => {
           eventLoc: object.get("eventLoc"),
           eventDate: object.get("eventDate"),
           createdBy: object.get("createdBy"),
+          isAttending: object.get("attendingUsers")
+            ? object.get("attendingUsers").includes(Parse.User.current().id)
+            : false,
         }));
         setEvents(events);
       } catch (error) {
@@ -48,6 +51,12 @@ const EventsPage = () => {
         event.set("numUsersAttending", attendingUsers.length);
         await event.save();
         console.log("User attending event:", event.id);
+        // Update the isAttending value in state
+        setEvents((prevEvents) =>
+          prevEvents.map((e) =>
+            e.objectId === event.id ? { ...e, isAttending: true } : e
+          )
+        );
       } else {
         console.log("User already attending event:", event.id);
       }
@@ -61,11 +70,13 @@ const EventsPage = () => {
       {events.map((event, i) => (
         <Card
           key={i}
+          objectID={event.objectID}
           title={event.eventTitle}
           description={event.eventDesc}
           location={event.eventLoc}
           date={event.eventDate}
           isMyEvent={event.createdBy === Parse.User.current().id}
+          isAttending={event.isAttending}
           onAttend={() => handleAttendEvent(event.objectId)}
         />
       ))}

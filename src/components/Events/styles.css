@@ -20,3 +20,6 @@ body {
   scrollbar-width: none; /* Firefox */
 }
 
+select{
+  margin-bottom: 4vh;
+}

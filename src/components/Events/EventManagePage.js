@@ -36,32 +36,25 @@ const EventsManagePage = () => {
       const currentUser = Parse.User.current();
       if (!currentUser) return;
 
-      const userQuery = new Parse.Query(Parse.User);
-      userQuery.equalTo("objectId", currentUser.id);
-
       const query = new Parse.Query("Events");
-      query.matchesQuery("attendingUsers", userQuery);
+      query.containedIn("attendingUsers", [currentUser.id]);
 
       try {
         const results = await query.find();
-        const eventsData = results.reduce((acc, event) => {
-          const attendingUsers = event.get("attendingUsers");
-          if (attendingUsers && attendingUsers.includes(currentUser.id)) {
-            acc.push({
-              objectId: event.id,
-              title: event.get("eventTitle"),
-              description: event.get("eventDesc"),
-              location: event.get("eventLoc"),
-              date: event.get("eventDate"),
-            });
-          }
-          return acc;
-        }, []);
+        const eventsData = results.map((event) => ({
+          objectId: event.id,
+          title: event.get("eventTitle"),
+          description: event.get("eventDesc"),
+          location: event.get("eventLoc"),
+          date: event.get("eventDate"),
+        }));
         setAttendingEvents(eventsData);
       } catch (error) {
         console.error("Error fetching attending events:", error);
       }
     };
+
+    fetchAttendingEvents();
   }, []);
 
   const handleDeleteEvent = async (objectId) => {
@@ -95,7 +88,7 @@ const EventsManagePage = () => {
       await event.save();
 
       // Update attendingEvents list after unattending
-      setAttendingEvents(attendingEvents.filter((id) => id !== objectId));
+      setAttendingEvents(attendingEvents.filter((event) => event.objectId !== objectId));
     } catch (error) {
       console.error("Error unattending event:", error);
       showAlert("Error unattending event. Please try again.");
@@ -128,14 +121,16 @@ const EventsManagePage = () => {
         />
       ))}
       <h1>Attending Events</h1>
-      {attendingEvents.map((eventId) => (
+      {attendingEvents.map((event) => (
         <Card
-          key={eventId}
-          title={"Attending Event"}
-          description={"Attending Event Description"}
-          location={"Attending Event Location"}
-          date={new Date()}
-          onUnattend={() => handleUnattendEvent(eventId)}
+          key={event.objectId}
+          title={event.title}
+          description={event.description}
+          location={event.location}
+          date={event.date}
+          createdBy={event.createdBy}
+          isManagePage={true}
+          onUnattend={() => handleUnattendEvent(event.objectId)}
         />
       ))}
     </div>
