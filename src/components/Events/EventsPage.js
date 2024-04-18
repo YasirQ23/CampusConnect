@@ -12,10 +12,12 @@ const EventsPage = () => {
       try {
         const results = await query.find();
         const events = results.map((object) => ({
+          objectId: object.id,
           eventTitle: object.get("eventTitle"),
           eventDesc: object.get("eventDesc"),
           eventLoc: object.get("eventLoc"),
           eventDate: object.get("eventDate"),
+          createdBy: object.get("createdBy"),
         }));
         setEvents(events);
       } catch (error) {
@@ -26,6 +28,34 @@ const EventsPage = () => {
     fetchEvents();
   }, []);
 
+  const handleAttendEvent = async (objectId) => {
+    const currentUser = Parse.User.current();
+    if (!currentUser) {
+      console.error("User not logged in");
+      return;
+    }
+
+    const Events = Parse.Object.extend("Events");
+    const query = new Parse.Query(Events);
+    try {
+      const event = await query.get(objectId);
+      const attendingUsers = event.get("attendingUsers") || [];
+      if (!attendingUsers.includes(currentUser.id)) {
+        // Add the current user to the list of attending users
+        attendingUsers.push(currentUser.id);
+        event.set("attendingUsers", attendingUsers);
+        // Update the number of attending users
+        event.set("numUsersAttending", attendingUsers.length);
+        await event.save();
+        console.log("User attending event:", event.id);
+      } else {
+        console.log("User already attending event:", event.id);
+      }
+    } catch (error) {
+      console.error("Error attending event:", error);
+    }
+  };
+
   return (
     <div>
       {events.map((event, i) => (
@@ -35,6 +65,8 @@ const EventsPage = () => {
           description={event.eventDesc}
           location={event.eventLoc}
           date={event.eventDate}
+          isMyEvent={event.createdBy === Parse.User.current().id}
+          onAttend={() => handleAttendEvent(event.objectId)}
         />
       ))}
     </div>

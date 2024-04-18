@@ -1,14 +1,15 @@
-// EventsManagePage.js
 import React, { useEffect, useState } from "react";
 import Parse from "parse";
 import Card from "./EventsCard";
 import { Alert } from "@mui/material";
 
 const EventsManagePage = () => {
-  const [events, setEvents] = useState([]);
+  const [myEvents, setMyEvents] = useState([]);
+  const [attendingEvents, setAttendingEvents] = useState([]);
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchMyEvents = async () => {
       const Events = Parse.Object.extend("Events");
       const query = new Parse.Query(Events);
       query.equalTo("createdBy", Parse.User.current());
@@ -21,34 +22,91 @@ const EventsManagePage = () => {
           location: event.get("eventLoc"),
           date: event.get("eventDate"),
         }));
-        setEvents(eventsData);
+        setMyEvents(eventsData);
       } catch (error) {
-        console.error("Error while fetching Events", error);
+        console.error("Error while fetching My Events", error);
       }
     };
 
-    fetchEvents();
+    fetchMyEvents();
   }, []);
-  const [alertMessage, setAlertMessage] = useState("");
+
+  useEffect(() => {
+    const fetchAttendingEvents = async () => {
+      const currentUser = Parse.User.current();
+      if (!currentUser) return;
+
+      const userQuery = new Parse.Query(Parse.User);
+      userQuery.equalTo("objectId", currentUser.id);
+
+      const query = new Parse.Query("Events");
+      query.matchesQuery("attendingUsers", userQuery);
+
+      try {
+        const results = await query.find();
+        const eventsData = results.reduce((acc, event) => {
+          const attendingUsers = event.get("attendingUsers");
+          if (attendingUsers && attendingUsers.includes(currentUser.id)) {
+            acc.push({
+              objectId: event.id,
+              title: event.get("eventTitle"),
+              description: event.get("eventDesc"),
+              location: event.get("eventLoc"),
+              date: event.get("eventDate"),
+            });
+          }
+          return acc;
+        }, []);
+        setAttendingEvents(eventsData);
+      } catch (error) {
+        console.error("Error fetching attending events:", error);
+      }
+    };
+  }, []);
+
   const handleDeleteEvent = async (objectId) => {
     const query = new Parse.Query("Events");
     try {
       const event = await query.get(objectId);
       const response = await event.destroy();
       console.log("Deleted ParseObject", response);
-      showAlert("Event Removeed!");
-      // Update events list after deletion
-      setEvents(events.filter((e) => e.objectId !== objectId));
+      showAlert("Event Removed!");
+      // Update myEvents list after deletion
+      setMyEvents(myEvents.filter((e) => e.objectId !== objectId));
     } catch (error) {
       console.error("Error while deleting ParseObject", error);
       showAlert("Error deleting event. Please try again.");
     }
   };
+
+  const handleUnattendEvent = async (objectId) => {
+    // Remove the current user from the list of attending users for the event
+    const eventQuery = new Parse.Query("Events");
+    try {
+      const event = await eventQuery.get(objectId);
+      const currentUser = Parse.User.current();
+      if (!currentUser) {
+        console.error("No current user found");
+        return;
+      }
+
+      event.remove("attendingUsers", currentUser.id);
+      event.increment("numUsersAttending", -1);
+      await event.save();
+
+      // Update attendingEvents list after unattending
+      setAttendingEvents(attendingEvents.filter((id) => id !== objectId));
+    } catch (error) {
+      console.error("Error unattending event:", error);
+      showAlert("Error unattending event. Please try again.");
+    }
+  };
+
   const showAlert = (message) => {
     setAlertMessage(message);
     setTimeout(() => {
       setAlertMessage("");
-    }, 10000); // Hide alert after 3 seconds
+    }, 10000); // Hide alert after 10 seconds
   };
 
   return (
@@ -58,7 +116,8 @@ const EventsManagePage = () => {
           {alertMessage}
         </Alert>
       )}
-      {events.map((event) => (
+      <h1>My Events</h1>
+      {myEvents.map((event) => (
         <Card
           key={event.objectId}
           title={event.title}
@@ -66,6 +125,17 @@ const EventsManagePage = () => {
           location={event.location}
           date={event.date}
           onDelete={() => handleDeleteEvent(event.objectId)}
+        />
+      ))}
+      <h1>Attending Events</h1>
+      {attendingEvents.map((eventId) => (
+        <Card
+          key={eventId}
+          title={"Attending Event"}
+          description={"Attending Event Description"}
+          location={"Attending Event Location"}
+          date={new Date()}
+          onUnattend={() => handleUnattendEvent(eventId)}
         />
       ))}
     </div>
