@@ -16,7 +16,7 @@ const EventsPage = () => {
           eventTitle: object.get("eventTitle"),
           eventDesc: object.get("eventDesc"),
           eventLoc: object.get("eventLoc"),
-          eventDate: object.get("eventDate"),
+          eventDate: new Date(object.get("eventDate")).toLocaleString(),
           createdBy: object.get("createdBy"),
           isAttending: object.get("attendingUsers")
             ? object.get("attendingUsers").includes(Parse.User.current().id)
@@ -65,12 +65,18 @@ const EventsPage = () => {
     }
   };
 
+  const filteredEvents = events.filter(
+    (event) =>
+      !event.isAttending && event.createdBy.id !== Parse.User.current().id
+  );
+
   return (
     <div>
-      {events.map((event, i) => (
+      <h1>Campus Events</h1>
+      {filteredEvents.map((event, i) => (
         <Card
           key={i}
-          objectID={event.objectID}
+          objectId={event.objectId} // Corrected here
           title={event.eventTitle}
           description={event.eventDesc}
           location={event.eventLoc}

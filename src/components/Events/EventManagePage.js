@@ -88,7 +88,9 @@ const EventsManagePage = () => {
       await event.save();
 
       // Update attendingEvents list after unattending
-      setAttendingEvents(attendingEvents.filter((event) => event.objectId !== objectId));
+      setAttendingEvents(
+        attendingEvents.filter((event) => event.objectId !== objectId)
+      );
     } catch (error) {
       console.error("Error unattending event:", error);
       showAlert("Error unattending event. Please try again.");
@@ -118,6 +120,7 @@ const EventsManagePage = () => {
           location={event.location}
           date={event.date}
           onDelete={() => handleDeleteEvent(event.objectId)}
+          hideAttend={true}
         />
       ))}
       <h1>Attending Events</h1>

@@ -5,7 +5,20 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Parse from "parse"; // Import Parse here
 
-const EventsCard = ({objectID, title, description, location, date, onDelete, onAttend, onUnattend, createdBy, isManagePage, isAttending }) => {
+const EventsCard = ({
+  objectID,
+  title,
+  description,
+  location,
+  date,
+  onDelete,
+  onAttend,
+  onUnattend,
+  createdBy,
+  isManagePage,
+  isAttending,
+  hideAttend
+}) => {
   // Format the date property
   const formattedDate = date ? new Date(date).toLocaleDateString() : "";
 
@@ -15,17 +28,23 @@ const EventsCard = ({objectID, title, description, location, date, onDelete, onA
   return (
     <Card>
       <CardContent>
-        <Typography variant="h5">{title}</Typography>
-        <Typography>{description}</Typography>
-        <Typography>Location: {location}</Typography>
-        <Typography>Date: {formattedDate}</Typography>
+        <Typography variant="h3">{title}</Typography>
+        <Typography>
+        <Typography variant="h5">What?</Typography> {description}
+        </Typography>
+        <Typography>
+          <Typography variant="h5">Where?</Typography> {location}
+        </Typography>
+        <Typography>
+          <Typography variant="h5">When?</Typography> {formattedDate}
+        </Typography>
         <div>
-          {onDelete && <Button onClick={onDelete}>Remove Event</Button>}
-          {!isMyEvent && !isManagePage && !isAttending && (
-            <Button onClick={() => onAttend(objectID)}>Attend</Button>
+          {onDelete && <button onClick={onDelete}>Remove Event</button>}
+          {!isMyEvent && !isManagePage && !isAttending && !hideAttend &&(
+            <button onClick={() => onAttend(objectID)}>Attend</button>
           )}
           {!isMyEvent && isManagePage && (
-            <Button onClick={() => onUnattend(objectID)}>Unattend</Button>
+            <button onClick={() => onUnattend(objectID)}>Unattend</button>
           )}
         </div>
       </CardContent>
