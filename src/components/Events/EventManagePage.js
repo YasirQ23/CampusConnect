@@ -19,6 +19,7 @@ const EventsManagePage = () => {
           objectId: event.id,
           title: event.get("eventTitle"),
           description: event.get("eventDesc"),
+          numAttendees: event.get("numUsersAttending"), 
           location: event.get("eventLoc"),
           date: event.get("eventDate"),
         }));
@@ -132,6 +133,7 @@ const EventsManagePage = () => {
           location={event.location}
           date={event.date}
           createdBy={event.createdBy}
+          numAttendees={event.numAttendees} 
           isManagePage={true}
           onUnattend={() => handleUnattendEvent(event.objectId)}
         />

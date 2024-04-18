@@ -24,7 +24,7 @@ export default function AuthPage() {
             <div className="overlay-panel overlay-left">
               <h1>Welcome Back!</h1>
               <p>
-                To keep connected with us please login!
+                To keep connected with FIU please login!
               </p>
               <button
                 className="ghost"

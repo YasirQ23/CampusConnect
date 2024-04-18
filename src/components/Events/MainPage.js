@@ -14,8 +14,8 @@ function MainPage() {
   };
 
   return (
-    <div class="page">
-      <div class="page-container">
+    <div className="page">
+      <div className="page-container">
         <NavBar onPageChange={handlePageChange} />
         {currentPage === "Events" && <EventsPage />}
         {currentPage === "Create" && <CreatePage />}

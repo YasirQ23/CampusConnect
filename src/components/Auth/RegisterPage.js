@@ -14,7 +14,6 @@ async function registerUser(credentials) {
     const user = new Parse.User();
     user.set("username", credentials.email);
     user.set("email", credentials.email);
-    // const hashedPassword = await bcrypt.hash(credentials.password,salt);
     user.set("password", credentials.password);
     user.set("name", credentials.name);
 

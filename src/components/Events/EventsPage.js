@@ -18,6 +18,7 @@ const EventsPage = () => {
           eventLoc: object.get("eventLoc"),
           eventDate: new Date(object.get("eventDate")).toLocaleString(),
           createdBy: object.get("createdBy"),
+          numAttendees: object.get("numUsersAttending"), 
           isAttending: object.get("attendingUsers")
             ? object.get("attendingUsers").includes(Parse.User.current().id)
             : false,
@@ -81,6 +82,7 @@ const EventsPage = () => {
           description={event.eventDesc}
           location={event.eventLoc}
           date={event.eventDate}
+          numAttendees={event.numAttendees} 
           isMyEvent={event.createdBy === Parse.User.current().id}
           isAttending={event.isAttending}
           onAttend={() => handleAttendEvent(event.objectId)}

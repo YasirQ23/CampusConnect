@@ -14,9 +14,10 @@ const EventsCard = ({
   onAttend,
   onUnattend,
   createdBy,
+  numAttendees,
   isManagePage,
   isAttending,
-  hideAttend
+  hideAttend,
 }) => {
   // Format the date property
   const formattedDate = date ? new Date(date).toLocaleDateString() : "";
@@ -29,7 +30,7 @@ const EventsCard = ({
       <CardContent>
         <Typography variant="h3">{title}</Typography>
         <Typography>
-        <Typography variant="h5">What?</Typography> {description}
+          <Typography variant="h5">What?</Typography> {description}
         </Typography>
         <Typography>
           <Typography variant="h5">Where?</Typography> {location}
@@ -37,9 +38,17 @@ const EventsCard = ({
         <Typography>
           <Typography variant="h5">When?</Typography> {formattedDate}
         </Typography>
+        <Typography>
+          {!isMyEvent && !isManagePage && (
+            <Typography variant="h5">
+              RSVP Now! There are {numAttendees} people(s) attending.
+            </Typography>
+          )}
+        </Typography>
+
         <div>
           {onDelete && <button onClick={onDelete}>Remove Event</button>}
-          {!isMyEvent && !isManagePage && !isAttending && !hideAttend &&(
+          {!isMyEvent && !isManagePage && !isAttending && !hideAttend && (
             <button onClick={() => onAttend(objectID)}>Attend</button>
           )}
           {!isMyEvent && isManagePage && (
