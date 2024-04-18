@@ -5,7 +5,7 @@ import SignUpForm from "./RegisterPage.js";
 
 export default function AuthPage() {
   const [type, setType] = useState("signIn");
-  const handleOnClick = text => {
+  const handleOnClick = (text) => {
     if (text !== type) {
       setType(text);
       return;
@@ -13,6 +13,7 @@ export default function AuthPage() {
   };
   const containerClass =
     "container " + (type === "signUp" ? "right-panel-active" : "");
+
   return (
     <div className="AuthPage">
       <div className={containerClass} id="container">
@@ -23,7 +24,7 @@ export default function AuthPage() {
             <div className="overlay-panel overlay-left">
               <h1>Welcome Back!</h1>
               <p>
-                To keep connected with us please login with your personal info
+                To keep connected with us please login!
               </p>
               <button
                 className="ghost"
@@ -34,8 +35,8 @@ export default function AuthPage() {
               </button>
             </div>
             <div className="overlay-panel overlay-right">
-              <h1>Hello, Friend!</h1>
-              <p>Enter your personal details and start journey with us</p>
+              <h1>Hello, FIU Student!</h1>
+              <p>Sign up for Campus Connect!</p>
               <button
                 className="ghost "
                 id="signUp"
